@@ -1,0 +1,15 @@
+# Add venv to .gitignore
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+instagram_state.json
+.env
+*.log
+
+# PyInstaller
+build/
+dist/
+*.spec.backup

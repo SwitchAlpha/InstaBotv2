@@ -1,0 +1,99 @@
+name: Build Executables
+
+on:
+  push:
+    tags:
+      - "v*" # Triggers on version tags like v1.0.0
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            artifact_name: InstaBotAPI-macOS
+            asset_name: InstaBotAPI-macOS
+          - os: windows-latest
+            artifact_name: InstaBotAPI-Windows.exe
+            asset_name: InstaBotAPI-Windows.exe
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Playwright browsers
+        run: |
+          playwright install chromium
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller instabot.spec
+
+      - name: Rename executable (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          mv dist/InstaBotAPI.exe dist/${{ matrix.asset_name }}
+
+      - name: Rename executable (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          mv dist/InstaBotAPI dist/${{ matrix.asset_name }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: dist/${{ matrix.asset_name }}
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./artifacts/InstaBotAPI-macOS/InstaBotAPI-macOS
+            ./artifacts/InstaBotAPI-Windows.exe/InstaBotAPI-Windows.exe
+          name: Release ${{ github.ref_name }}
+          body: |
+            ## Instagram Bot API - ${{ github.ref_name }}
+
+            ### Downloads
+            - **macOS**: Download `InstaBotAPI-macOS`
+            - **Windows**: Download `InstaBotAPI-Windows.exe`
+
+            ### Requirements
+            - `.env` file with your Instagram credentials
+            - `localtunnel` installed: `npm install -g localtunnel`
+            - Playwright browsers: Run executable once to install
+
+            ### Usage
+            1. Create `.env` file with `IG_USERNAME` and `IG_PASSWORD`
+            2. Run the executable
+            3. Public URL will be created and copied to clipboard
+
+            See [README](https://github.com/${{ github.repository }}/blob/main/README.md) for details.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
