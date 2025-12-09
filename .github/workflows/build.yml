@@ -96,4 +96,4 @@ jobs:
 
             See [README](https://github.com/${{ github.repository }}/blob/main/README.md) for details.
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
