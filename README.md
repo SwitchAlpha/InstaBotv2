@@ -13,12 +13,7 @@ pip install flask playwright python-dotenv
 playwright install chromium
 ```
 
-2. **Install localtunnel (for public URL):**
-```bash
-npm install -g localtunnel
-```
-
-3. **Configure .env file:**
+2. **Configure .env file:**
 ```env
 IG_USERNAME=your_instagram_username
 IG_PASSWORD=your_instagram_password
@@ -35,9 +30,10 @@ python start.py
 
 This will:
 - ✅ Start Flask server on port 5001
-- ✅ Create a public URL via localtunnel
+- ✅ Create a public URL via Cloudflare Tunnel
 - ✅ Automatically copy the URL to clipboard
-- ✅ Retry if firewall blocks the connection
+- ✅ **No signup required - production-ready!**
+- ✅ Works on Mac, Linux, and Windows
 
 ## Manual Usage
 
@@ -81,30 +77,34 @@ curl http://localhost:5001/health
 - `POST /send` - Send a DM (requires `username` and `message` in JSON body)
 - `GET /health` - Health check endpoint
 
-## Localtunnel Integration
+## Public URL Tunnel (Cloudflare)
 
-The `start.py` script provides a public URL for your API:
+The `start.py` script provides a public URL using **Cloudflare Tunnel**:
 
 ```bash
 python start.py
 ```
 
 **Features:**
-- 🌐 Creates public URL (e.g., `https://abc-xyz.loca.lt`)
+- 🌐 Creates public HTTPS URL (e.g., `https://abc-xyz.trycloudflare.com`)
 - 📋 Automatically copies URL to clipboard
-- 🔄 Retries up to 5 times if firewall blocks connection
+- 🆓 **No signup required** - completely free!
+- ⚡ Very reliable (Cloudflare infrastructure)
 - 🛑 Graceful shutdown with Ctrl+C
+- 💻 Works on Mac, Linux, Windows
 
 **Example output:**
 ```
-✅ PUBLIC URL: https://friendly-rabbit-123.loca.lt
+✅ PUBLIC URL: https://abc-xyz-123.trycloudflare.com
 📋 URL copied to clipboard!
 
 🎯 API Endpoints:
-   • POST https://friendly-rabbit-123.loca.lt/login
-   • POST https://friendly-rabbit-123.loca.lt/send
-   • GET  https://friendly-rabbit-123.loca.lt/health
+   • POST https://abc-xyz-123.trycloudflare.com/login
+   • POST https://abc-xyz-123.trycloudflare.com/send
+   • GET  https://abc-xyz-123.trycloudflare.com/health
 ```
+
+> **Note:** First run downloads cloudflared binary (~50MB). Subsequent runs are instant.
 
 ## Notes
 - The browser will open in non-headless mode by default for debugging

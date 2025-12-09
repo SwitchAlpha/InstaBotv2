@@ -69,11 +69,6 @@ IG_USERNAME=your_username
 IG_PASSWORD=your_password
 ```
 
-3. Install Node.js and localtunnel:
-```bash
-npm install -g localtunnel
-```
-
 ### Run:
 **macOS:**
 ```bash
@@ -87,6 +82,8 @@ InstaBotAPI-Windows.exe
 ```
 
 The public URL will be displayed and copied to your clipboard automatically!
+
+> **Note:** First run will download ngrok binary (~20MB) automatically.
 
 ## Troubleshooting
 
