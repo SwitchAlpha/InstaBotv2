@@ -22,6 +22,13 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+# Import auto-update module
+try:
+    from auto_update import check_and_update
+    AUTO_UPDATE_AVAILABLE = True
+except ImportError:
+    AUTO_UPDATE_AVAILABLE = False
+
 # Track processes for cleanup
 flask_process = None
 tunnel_process = None
@@ -275,6 +282,17 @@ def cleanup(signum=None, frame=None):
 
 def main():
     """Main entry point"""
+    # Check for updates first
+    if AUTO_UPDATE_AVAILABLE:
+        try:
+            if check_and_update():
+                # If update was successful, user needs to restart
+                print("Please restart the application to use the new version.")
+                sys.exit(0)
+        except Exception as e:
+            print(f"Auto-update check failed: {e}")
+            print("Continuing with current version...\n")
+    
     # Register cleanup handlers
     signal.signal(signal.SIGINT, cleanup)
     signal.signal(signal.SIGTERM, cleanup)

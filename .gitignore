@@ -13,3 +13,6 @@ instagram_state.json
 build/
 dist/
 *.spec.backup
+
+# Debug files
+debug_*.png
