@@ -1,7 +1,14 @@
 import os
+import sys
 import time
 from playwright.sync_api import sync_playwright
 from dotenv import load_dotenv
+
+# Ensure UTF-8 encoding for stdout/stderr to handle emojis
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8')
+if sys.stderr.encoding != 'utf-8':
+    sys.stderr.reconfigure(encoding='utf-8')
 
 load_dotenv()
 
