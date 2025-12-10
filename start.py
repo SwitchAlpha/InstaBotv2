@@ -80,7 +80,7 @@ def get_cloudflared_path():
         return str(cloudflared_path)
     
     # Download cloudflared
-    print(f"📥 Downloading cloudflared (~50MB)...")
+    print(f"[DOWNLOAD] Downloading cloudflared (~50MB)...")
     print(f"   This only happens once...")
     
     try:
@@ -122,12 +122,12 @@ def get_cloudflared_path():
         current_permissions = os.stat(str(cloudflared_path)).st_mode
         os.chmod(str(cloudflared_path), current_permissions | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
         
-        print(f"✅ Cloudflared downloaded successfully!")
+        print(f"[SUCCESS] Cloudflared downloaded successfully!")
         print(f"   Binary size: {cloudflared_path.stat().st_size / 1024 / 1024:.1f}MB")
         return str(cloudflared_path)
     
     except Exception as e:
-        print(f"❌ Failed to download cloudflared: {e}")
+        print(f"[ERROR] Failed to download cloudflared: {e}")
         # Clean up on failure
         try:
             if tgz_path.exists():
@@ -159,7 +159,7 @@ def copy_to_clipboard(text):
 def run_flask():
     """Run Flask server"""
     global flask_process
-    print("🚀 Starting Flask server...")
+    print("[START] Starting Flask server...")
     flask_process = subprocess.Popen(
         ['python', 'app.py'],
         stdout=subprocess.PIPE,
@@ -178,7 +178,7 @@ def start_tunnel():
     
     try:
         print(f"\n{'='*60}")
-        print("🌐 Starting Cloudflare Tunnel...")
+        print("[START] Starting Cloudflare Tunnel...")
         print("   (Reliable & Free - No signup required!)")
         print(f"{'='*60}\n")
         
@@ -209,14 +209,14 @@ def start_tunnel():
                     url_found = True
                     
                     print(f"\n{'='*60}")
-                    print(f"✅ PUBLIC URL: {url}")
+                    print(f"[SUCCESS] PUBLIC URL: {url}")
                     print(f"{'='*60}\n")
                     
                     # Copy to clipboard
                     if copy_to_clipboard(url):
-                        print(f"📋 URL copied to clipboard!")
+                        print(f"[CLIPBOARD] URL copied to clipboard!")
                     else:
-                        print(f"📋 Copy this URL manually: {url}")
+                        print(f"[CLIPBOARD] Copy this URL manually: {url}")
                     
                     # Register with n8n webhook
                     try:
@@ -228,24 +228,24 @@ def start_tunnel():
                             'region': region
                         }
                         
-                        print(f"\n📡 Registering with webhook...")
+                        print(f"\n[WEBHOOK] Registering with webhook...")
                         print(f"   Region: {region}")
                         
                         response = requests.post(webhook_url, json=payload, timeout=10)
                         
                         if response.status_code == 200:
-                            print(f"✅ Successfully registered with n8n!")
+                            print(f"[SUCCESS] Successfully registered with n8n!")
                         else:
-                            print(f"⚠️  Webhook registration failed (status {response.status_code})")
+                            print(f"[WARNING] Webhook registration failed (status {response.status_code})")
                     except Exception as webhook_error:
-                        print(f"⚠️  Webhook registration failed: {webhook_error}")
+                        print(f"[WARNING] Webhook registration failed: {webhook_error}")
                     
-                    print(f"\n🎯 API Endpoints:")
+                    print(f"\n[API] API Endpoints:")
                     print(f"   • POST {url}/login")
                     print(f"   • POST {url}/send")
                     print(f"   • GET  {url}/health")
                     print(f"\n{'='*60}\n")
-                    print(f"🔗 Tunnel is active. Press Ctrl+C to stop.\n")
+                    print(f"\n[TUNNEL] Tunnel is active. Press Ctrl+C to stop.\n")
             
             # Show relevant messages
             if 'error' in line.lower() or 'fail' in line.lower():
@@ -255,8 +255,8 @@ def start_tunnel():
         tunnel_process.wait()
         
     except Exception as e:
-        print(f"\n❌ Error starting Cloudflare tunnel: {e}")
-        print(f"\n💡 Troubleshooting:")
+        print(f"\n[ERROR] Error starting Cloudflare tunnel: {e}")
+        print(f"\n[HELP] Troubleshooting:")
         print(f"   1. Check internet connection")
         print(f"   2. Try running: python app.py (to test Flask alone)")
         print(f"\n   You can still access the API locally at: http://localhost:5001\n")
@@ -264,7 +264,7 @@ def start_tunnel():
 def cleanup(signum=None, frame=None):
     """Cleanup processes on exit"""
     print(f"\n\n{'='*60}")
-    print("🛑 Shutting down...")
+    print("[STOP] Shutting down...")
     print(f"{'='*60}\n")
     
     if tunnel_process:
@@ -283,7 +283,7 @@ def cleanup(signum=None, frame=None):
         except:
             flask_process.kill()
     
-    print("✅ Cleanup complete")
+    print("[SUCCESS] Cleanup complete")
     sys.exit(0)
 
 def main():
@@ -304,7 +304,7 @@ def main():
     signal.signal(signal.SIGTERM, cleanup)
     
     print(f"\n{'='*60}")
-    print("🤖 Instagram Bot API - Starting Up")
+    print("[BOT] Instagram Bot API - Starting Up")
     print(f"{'='*60}\n")
     
     # Start Flask in background thread
@@ -312,7 +312,7 @@ def main():
     flask_thread.start()
     
     # Wait for Flask to start
-    print("⏳ Waiting for Flask to initialize...")
+    print("[WAIT] Waiting for Flask to initialize...")
     time.sleep(3)
     
     # Start tunnel (blocking)

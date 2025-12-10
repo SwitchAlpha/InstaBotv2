@@ -63,13 +63,13 @@ class InstagramBot:
                 if "Turn On" in description:
                     not_now = self.page.wait_for_selector('button:has-text("Not Now")', timeout=2000)
                     if not_now:
-                        print(f"  ✓ Dismissing popup: {description} -> Clicking Not Now")
+                        print(f"  [OK] Dismissing popup: {description} -> Clicking Not Now")
                         not_now.click()
                         time.sleep(1)
                 else:
                     element = self.page.wait_for_selector(selector, timeout=2000)
                     if element:
-                        print(f"  ✓ Dismissing popup: {description}")
+                        print(f"  [OK] Dismissing popup: {description}")
                         element.click()
                         time.sleep(1)
             except:
@@ -125,10 +125,10 @@ class InstagramBot:
                         username_field = self.page.wait_for_selector(selector, timeout=2000)
                     
                     if username_field:
-                        print(f"✓ Found username field with selector: {selector}")
+                        print(f"[OK] Found username field with selector: {selector}")
                         break
                 except:
-                    print(f"✗ Username field not found with: {selector}")
+                    print(f"[FAIL] Username field not found with: {selector}")
                     continue
             
             if not username_field:
@@ -153,10 +153,10 @@ class InstagramBot:
                         password_field = self.page.wait_for_selector(selector, timeout=2000)
                     
                     if password_field:
-                        print(f"✓ Found password field with selector: {selector}")
+                        print(f"[OK] Found password field with selector: {selector}")
                         break
                 except:
-                    print(f"✗ Password field not found with: {selector}")
+                    print(f"[FAIL] Password field not found with: {selector}")
                     continue
             
             if not password_field:
@@ -198,7 +198,7 @@ class InstagramBot:
                         login_button = self.page.wait_for_selector(selector, timeout=2000)
                     
                     if login_button:
-                        print(f"✓ Found login button with selector: {selector}")
+                        print(f"[OK] Found login button with selector: {selector}")
                         break
                 except:
                     continue
@@ -221,9 +221,9 @@ class InstagramBot:
             # Check if login was successful
             try:
                 self.page.wait_for_selector('svg[aria-label="Home"]', timeout=10000)
-                print("✓ Login successful - Home icon found!")
+                print("[SUCCESS] Login successful - Home icon found!")
             except:
-                print("⚠ Warning: Could not verify login success. Check screenshots.")
+                print("[WARNING] Warning: Could not verify login success. Check screenshots.")
             
             # Handle dialogs
             try:
@@ -246,12 +246,12 @@ class InstagramBot:
             
             # Save state
             self._save_state()
-            print("✓ State saved to instagram_state.json!")
+            print("[SUCCESS] State saved to instagram_state.json!")
             print("=" * 50)
             return True
             
         except Exception as e:
-            print(f"❌ Login error: {e}")
+            print(f"[ERROR] Login error: {e}")
             import traceback
             traceback.print_exc()
             try:
@@ -290,7 +290,7 @@ class InstagramBot:
             
             # Check if we need to login
             if 'login' in self.page.url:
-                print("❌ Not logged in. Please run login() first.")
+                print("[ERROR] Not logged in. Please run login() first.")
                 return False
             
             # The URL should redirect to something like:
@@ -319,14 +319,14 @@ class InstagramBot:
                 try:
                     message_input = self.page.wait_for_selector(selector, timeout=5000)
                     if message_input:
-                        print(f"✓ Found message input with selector: {selector}")
+                        print(f"[OK] Found message input with selector: {selector}")
                         break
                 except:
-                    print(f"✗ Message input not found with: {selector}")
+                    print(f"[FAIL] Message input not found with: {selector}")
                     continue
             
             if not message_input:
-                print("❌ Could not find message input field!")
+                print("[ERROR] Could not find message input field!")
                 self.page.screenshot(path='debug_dm_2_no_input.png')
                 print("Screenshot saved: debug_dm_2_no_input.png")
                 return False
@@ -356,7 +356,7 @@ class InstagramBot:
                 try:
                     send_button = self.page.wait_for_selector(selector, timeout=2000)
                     if send_button:
-                        print(f"✓ Found send button with selector: {selector}")
+                        print(f"[OK] Found send button with selector: {selector}")
                         break
                 except:
                     continue
@@ -374,12 +374,12 @@ class InstagramBot:
             self.page.screenshot(path='debug_dm_4_after_send.png')
             print("Screenshot saved: debug_dm_4_after_send.png")
             
-            print(f"✓ Message sent to {username}!")
+            print(f"[SUCCESS] Message sent to {username}!")
             print("=" * 50)
             return True
                 
         except Exception as e:
-            print(f"❌ Error sending DM: {e}")
+            print(f"[ERROR] Error sending DM: {e}")
             import traceback
             traceback.print_exc()
             try:
